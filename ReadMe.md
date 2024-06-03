@@ -21,7 +21,7 @@ schema like  ->  {
     "apartmentNumber":"91"
   },
   "email":"yuwarajalingamd@gmail.com",
-  "password":"Dineshrox1233!"
+  "password":"Password1233!"
 }
 
 
@@ -30,5 +30,5 @@ login for member
 url -> http://localhost:3000/member/login
  
 schema like -> {  "email":"yuwarajalingamd@gmail.com",
-"hashed_password":"Dineshrox1233!"
+"hashed_password":"Password1233!"
 }
