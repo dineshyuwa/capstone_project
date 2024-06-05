@@ -15,6 +15,7 @@ export interface IReciept extends Document {
     lineItems: Array<ILineItem>;
     vendorAddress?: IVendorAddress;
     created_by: Types.ObjectId;
+    reciept_object_url: string;
 }
 
 const recieptSchema = new mongoose.Schema<IReciept>(
@@ -60,6 +61,10 @@ const recieptSchema = new mongoose.Schema<IReciept>(
             required: true,
             ref: 'Member'
         },
+        reciept_object_url: {
+            type: String,
+            required: true,
+        }
     },
     { timestamps: true }
 );
