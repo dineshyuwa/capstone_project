@@ -1,4 +1,4 @@
-import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { ObjectCannedACL, PutObjectCommand } from "@aws-sdk/client-s3";
 import { s3Client } from "../../aws/s3Client";
 import { ExtractTextService } from "../../aws/textExtract";
 import generateUniqueFilename from "../utils/generateUniqueFileName";
@@ -11,6 +11,7 @@ import Reciepts from "../models/reciept";
 
 const extractTextService = new ExtractTextService();
 const BUCKET_NAME = process.env.BUCKET_NAME || 'capstone-project-witwizards';
+const REGION = process.env.REGION;
 
 interface AuthenticatedRequest extends Request {
     userId?: string;
@@ -32,6 +33,7 @@ const uploadImage = async (req: AuthenticatedRequest, res: Response, next: NextF
         const fileStream = fs.createReadStream(filePath);
 
         const uploadParams = {
+            ACL: ObjectCannedACL.public_read,
             Bucket: BUCKET_NAME,
             Key: uniqueFilename,
             Body: fileStream,
@@ -40,6 +42,8 @@ const uploadImage = async (req: AuthenticatedRequest, res: Response, next: NextF
         const command = new PutObjectCommand(uploadParams);
 
         await s3Client.send(command);
+
+        const url = `https://${BUCKET_NAME}.s3.${REGION}.amazonaws.com/${uniqueFilename}`;
 
         fs.unlinkSync(filePath);
 
@@ -95,14 +99,14 @@ const uploadImage = async (req: AuthenticatedRequest, res: Response, next: NextF
                 vendorAddress: address,
                 lineItems: lineItems,
                 created_by: customerId,
-                reciept_object_url:uniqueFilename,
+                reciept_object_url:url,
             });
 
             await reciept.save();
 
             res.status(200).json({invoiceData});
         } catch (err) {
-            console.error('Error running examples:', err);
+            console.error('Error extracting details from:', err);
         }
     } catch (err) {
         console.error("Error uploading image", err);
