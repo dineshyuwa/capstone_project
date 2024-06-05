@@ -3,8 +3,8 @@ import mongoose from 'mongoose';
 import 'dotenv/config';
 import cors from 'cors';
 
-
 import MemberRoutes from './objects/users/member/routes/memberRoutes';
+import RecieptRoutes from './objects/reciepts/routes/recieptRoutes';
 
 const server = express();
 
@@ -13,6 +13,8 @@ server.use(cors());
 
 
 server.use('/member', MemberRoutes);
+
+server.use('/reciept', RecieptRoutes);
 
 if (process.env.DB_LOCATION) {
   mongoose.connect(process.env.DB_LOCATION, {
