@@ -50,7 +50,7 @@ const uploadImage = async (req: AuthenticatedRequest, res: Response, next: NextF
         };
 
         const getObjectCommand = new GetObjectCommand(getObjectParams);
-        const url = await getSignedUrl(s3Client, getObjectCommand, { expiresIn: 3600 });
+        const url = await getSignedUrl(s3Client, getObjectCommand);
 
         try {
             const invoiceData = await extractTextService.getInvoiceContent(
