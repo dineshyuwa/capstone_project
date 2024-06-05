@@ -1,4 +1,4 @@
-import { PutObjectCommand,GetObjectCommand } from "@aws-sdk/client-s3";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { s3Client } from "../../aws/s3Client";
 import { ExtractTextService } from "../../aws/textExtract";
 import generateUniqueFilename from "../utils/generateUniqueFileName";
@@ -7,7 +7,6 @@ import * as fs from "fs";
 import * as path from "path";
 import { IVendorAddress } from "../models/vendorAddress";
 import Reciepts from "../models/reciept";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 
 const extractTextService = new ExtractTextService();
@@ -43,14 +42,6 @@ const uploadImage = async (req: AuthenticatedRequest, res: Response, next: NextF
         await s3Client.send(command);
 
         fs.unlinkSync(filePath);
-
-        const getObjectParams = {
-            Bucket: BUCKET_NAME,
-            Key: uniqueFilename,
-        };
-
-        const getObjectCommand = new GetObjectCommand(getObjectParams);
-        const url = await getSignedUrl(s3Client, getObjectCommand);
 
         try {
             const invoiceData = await extractTextService.getInvoiceContent(
@@ -104,10 +95,8 @@ const uploadImage = async (req: AuthenticatedRequest, res: Response, next: NextF
                 vendorAddress: address,
                 lineItems: lineItems,
                 created_by: customerId,
-                reciept_object_url:url,
+                reciept_object_url:uniqueFilename,
             });
-
-           
 
             await reciept.save();
 
