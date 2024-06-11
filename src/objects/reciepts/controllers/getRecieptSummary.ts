@@ -6,25 +6,19 @@ import { Request, Response, NextFunction } from 'express';
 import * as fs from "fs";
 import * as path from "path";
 import { IVendorAddress } from "../models/vendorAddress";
-import Reciepts from "../models/reciept";
+import { summary_keys } from "../constants/constant";
 
 
 const extractTextService = new ExtractTextService();
 const BUCKET_NAME = process.env.BUCKET_NAME || 'capstone-project-witwizards';
 const REGION = process.env.REGION;
 
-interface AuthenticatedRequest extends Request {
-    userId?: string;
-  }
-
-const uploadImage = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+const uploadImage = async (req: Request, res: Response, next: NextFunction) => {
     try {
 
         if (!req.file) {
             return res.status(400).send("No file uploaded.");
         }
-
-        const customerId = req.userId;
     
         const filePath = path.resolve(req.file.path);
         const originalFilename = req.file.originalname;
@@ -65,14 +59,10 @@ const uploadImage = async (req: AuthenticatedRequest, res: Response, next: NextF
                     const item = invoiceData.summary[key];
                     if (key === "ADDRESS" || key === "STREET" || key === "CITY" || key === "STATE" || key === "ZIP_CODE" || key === "ADDRESS_BLOCK" || key === "VENDOR_ADDRESS") {
                         address[key as keyof IVendorAddress] = item.value;
-                    } else {
-                        summary[key] = item.value
+                    } else if (summary_keys.includes(key)) {
+                        summary[key] = item.value;
                     }
                 }
-            }
-
-            if (!invoiceData.summary.NAME || !invoiceData.summary.VENDOR_NAME || !invoiceData.summary.TOTAL) {
-                res.status(401).json({ error: "Not enough data" });
             }
 
             const lineItems = invoiceData.lineItems.map((item: any) => {
@@ -83,28 +73,9 @@ const uploadImage = async (req: AuthenticatedRequest, res: Response, next: NextF
                     UNIT_PRICE: item.UNIT_PRICE || null,
                     EXPENSE_ROW: item.EXPENSE_ROW || null,
                 }
-            })
-
-
-            let reciept = new Reciepts({
-                shopName: summary.NAME || null,
-                amountPaid: summary.AMOUNT_PAID || null,
-                discount: summary.DISCOUNT || null,
-                invoice_reciept_date: summary.INVOICE_RECEIPT_DATE || null,
-                tax: summary.TAX || null,
-                total: summary.TOTAL || null,
-                vendor_name: summary.VENDOR_NAME || null,
-                vendor_phone:summary.VENDOR_PHONE || null,
-                vendor_url: summary.VENDOR_URL || null,
-                vendorAddress: address,
-                lineItems: lineItems,
-                created_by: customerId,
-                reciept_object_url:url,
             });
 
-            await reciept.save();
-
-            res.status(200).json({invoiceData});
+            res.status(200).json({...summary,url,address,lineItems});
         } catch (err) {
             console.error('Error extracting details from:', err);
         }

@@ -3,10 +3,10 @@ import {ILineItem} from './lineItem';
 import { IVendorAddress } from './vendorAddress';
 
 export interface IReciept extends Document {
-    shopName: string;
+    shopName?: string;
     amountPaid?: string;
     discount?: string;
-    invoice_reciept_date?: string;
+    invoice_reciept_date?: Date;
     tax?: string;
     total: string;
     vendor_name?: string;
@@ -22,7 +22,6 @@ const recieptSchema = new mongoose.Schema<IReciept>(
     {
         shopName: {
             type: String,
-            required: true,
         },
         amountPaid: {
             type: String,
@@ -31,7 +30,7 @@ const recieptSchema = new mongoose.Schema<IReciept>(
             type: String,
         },
         invoice_reciept_date: {
-            type: String,
+            type: Date,
         },
         tax: {
             type: String,
