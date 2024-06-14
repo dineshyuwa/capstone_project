@@ -51,11 +51,15 @@ const saveRecieptSummary = async (req: AuthenticatedRequest, res: Response, next
       reciept_object_url,
     };
 
+    if (!receiptData.total || !receiptData.shopName || !receiptData.created_by || !receiptData.reciept_object_url) {
+      return res.status(201).json({ message: 'Please fill the required fields' });
+    }
+
     const receiptSummary = new Receipt(receiptData);
 
     await receiptSummary.save();
 
-    res.status(201).json({ message: 'Receipt summary saved successfully', receiptSummary });
+    return res.status(201).json({ message: 'Receipt summary saved successfully', receiptSummary });
   } catch (error) {
     next(error);
   }
