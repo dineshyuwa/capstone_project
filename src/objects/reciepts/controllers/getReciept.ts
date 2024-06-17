@@ -1,7 +1,6 @@
 import { Response, NextFunction } from 'express';
 import { AuthenticatedRequest } from '../../middlewares/authenticatedRequest';
 import Receipt from '../models/reciept';
-import mongoose, { Document, Schema, Types } from 'mongoose';
 
 const getReciept = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
