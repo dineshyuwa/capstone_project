@@ -42,8 +42,6 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
 
         const memberExists = await Member.find({ email });
 
-        console.log(memberExists);
-
         if (memberExists.length) {
             return res.status(403).json({ "error": "Email Already Exists" });
         }
