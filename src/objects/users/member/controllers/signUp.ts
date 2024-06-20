@@ -39,6 +39,12 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
         if (!PASSWORD_REGEX.test(password)) {
             return res.status(403).json({ "error": "Password should be 6 to 20 characters long with a numeric, 1 lowercase and 1 uppercase letters" });
         }
+
+        const memberExists = await Member.find({ email });
+
+        if (memberExists.length) {
+            return res.status(403).json({ "error": "Email Already Exists" });
+        }
     
         const hashed_password = await bcrypt.hash(password, 10);
     
@@ -66,12 +72,6 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
             });
         }
     } catch (err: any) {
-        if (err.name === 'MongoError' && err.code === 11000) {
-            return res.status(400).json({ "error": 'Email already exists' });
-        }
-        if (err.name === 'ValidationError') {
-            return res.status(400).json({ "error": err.message });
-          }
           return res.status(500).json({ "error": err.message });
     }
 };

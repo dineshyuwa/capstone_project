@@ -4,13 +4,15 @@ import getRecieptSummary from '../controllers/getRecieptSummary';
 import isLogin from '../../middlewares/isCustomerLogin';
 import saveRecieptSummary from '../controllers/saveRecieptSummary';
 import getReciepts from '../controllers/getReciepts';
+import getReciept from '../controllers/getReciept';
 
 const router = express.Router();
 const upload = multer({ dest: "uploads/" });
 
 router.post("/getRecieptSummary", isLogin, upload.single("image"), getRecieptSummary);
 router.post("/saveRecieptSummary", isLogin, saveRecieptSummary);
-router.get("/memeber/getReciepts",isLogin,getReciepts);
+router.get("/memeber/getReciepts", isLogin, getReciepts);
+router.get("/memeber/getReciept/:id",isLogin,getReciept);
 
 
 export default router;
