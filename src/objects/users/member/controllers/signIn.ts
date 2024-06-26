@@ -24,6 +24,7 @@ if (!jwtSecretKey) {
 
 const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
+
     const { email, hashed_password }: LoginRequestBody = req.body;
 
     const member = await Member.findOne({ email }) as MemberDocument | null;
@@ -42,7 +43,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
       { expiresIn: accessTokenExpiry }
     );
 
-    res.status(200).json({ accessToken, userId: member._id.toString() });
+    res.status(200).json({ accessToken, userId: member._id.toString(),msg:"Successfully LoggedIn" });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Internal server error' });
