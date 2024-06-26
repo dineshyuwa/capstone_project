@@ -69,6 +69,7 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
                 job,
                 address,
                 email,
+                "msg":"Account Registration Success"
             });
         }
     } catch (err: any) {
