@@ -1,12 +1,14 @@
 import mongoose, { Document, Schema, Types } from 'mongoose';
 import {ILineItem} from './lineItem';
 import { IVendorAddress } from './vendorAddress';
+import { categories } from '../constants/constant';
 
 export interface IReciept extends Document {
     shopName: string;
+    category: string;
     amountPaid?: string;
     discount?: string;
-    invoice_reciept_date?: Date;
+    invoice_reciept_date?: string;
     tax?: string;
     total: string;
     vendor_name?: string;
@@ -24,6 +26,11 @@ const recieptSchema = new mongoose.Schema<IReciept>(
             type: String,
             required:true,
         },
+        category: {
+            type: String,
+            enum: categories,
+            required: true,
+        },
         amountPaid: {
             type: String,
         },
@@ -31,7 +38,7 @@ const recieptSchema = new mongoose.Schema<IReciept>(
             type: String,
         },
         invoice_reciept_date: {
-            type: Date,
+            type: String,
         },
         tax: {
             type: String,
