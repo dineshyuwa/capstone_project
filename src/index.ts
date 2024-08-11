@@ -5,6 +5,7 @@ import cors from 'cors';
 
 import MemberRoutes from './objects/users/member/routes/memberRoutes';
 import RecieptRoutes from './objects/reciepts/routes/recieptRoutes';
+import TestRedisRoutes from './objects/redisTest/routes/testRedisRoutes';
 
 const server = express();
 
@@ -29,3 +30,9 @@ if (process.env.DB_LOCATION) {
 server.listen(process.env.PORT, () => {
   console.log("listening on port -> " + process.env.PORT);
 })
+
+server.use('/test_redis', TestRedisRoutes);
+
+server.listen(5001, () => {
+  console.log("listening on port -> " + 5001);
+});
